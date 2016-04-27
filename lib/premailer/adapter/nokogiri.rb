@@ -90,7 +90,7 @@ class Premailer
           el['style'] = attributes.join('; ') + ";"
         end
 
-        doc = write_unmergable_css_rules(doc, @unmergable_rules)
+        doc = write_unmergable_css_rules(doc, @unmergable_rules) unless @options[:remove_styles]
 
         if @options[:remove_classes] or @options[:remove_comments]
           doc.traverse do |el|
@@ -130,9 +130,17 @@ class Premailer
         @processed_doc = doc
         if is_xhtml?
           # we don't want to encode carriage returns
-          @processed_doc.to_xhtml(:encoding => @options[:output_encoding]).gsub(/&\#(xD|13);/i, "\r")
+          body = @processed_doc.to_xhtml({encoding: @options[:output_encoding]}.merge(@options[:nokogiri])).gsub(/&\#(xD|13);/i, "\r")
         else
-          @processed_doc.to_html(:encoding => @options[:output_encoding])
+          body = @processed_doc.to_html({encoding: @options[:output_encoding]}.merge(@options[:nokogiri]))
+        end
+
+        # Remove any meta tag
+        if @options[:remove_meta]
+          doc.search('//meta').remove
+          body.gsub(/\<meta[\w\s\d;=\'\"\/\-]*\>/i, '')
+        else
+          body
         end
       end
 

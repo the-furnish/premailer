@@ -161,6 +161,8 @@ class Premailer
   # @option options [Boolean] :remove_classes Remove class attributes. Default is false.
   # @option options [Boolean] :remove_comments Remove html comments. Default is false.
   # @option options [Boolean] :remove_scripts Remove <tt>script</tt> elements. Default is true.
+  # @option options [Boolean] :remove_styles Remove <tt>style</tt> elements. Default is false.
+  # @option options [Boolean] :remove_meta Remove <tt>meta</tt> elements. Default is false.
   # @option options [Boolean] :reset_contenteditable Remove <tt>contenteditable</tt> attributes. Default is true.
   # @option options [Boolean] :preserve_styles Whether to preserve any <tt>link rel=stylesheet</tt> and <tt>style</tt> elements.  Default is false.
   # @option options [Boolean] :preserve_reset Whether to preserve styles associated with the MailChimp reset code. Default is true.
@@ -174,6 +176,7 @@ class Premailer
   # @option options [Symbol] :adapter Which HTML parser to use, either <tt>:nokogiri</tt> or <tt>:hpricot</tt>.  Default is <tt>:hpricot</tt>.
   # @option options [String] :output_encoding Output encoding option for Nokogiri adapter. Should be set to "US-ASCII" to output HTML entities instead of Unicode characters.
   # @option options [Boolean] :create_shorthands Combine several properties into a shorthand one, e.g. font: style weight size. Default is true.
+  # @option options [Hash] :nokogiri Nokogiri to_xml/to_html options
   def initialize(html, options = {})
     @options = {:warn_level => Warnings::SAFE,
                 :line_length => 65,
@@ -183,6 +186,8 @@ class Premailer
                 :remove_ids => false,
                 :remove_comments => false,
                 :remove_scripts => true,
+                :remove_styles => false,
+                :remove_meta => false,
                 :reset_contenteditable => true,
                 :css => [],
                 :css_to_attributes => true,
@@ -202,6 +207,7 @@ class Premailer
                 :unescaped_ampersand => false,
                 :create_shorthands => true,
                 :adapter => Adapter.use,
+                :nokogiri => {}
                 }.merge(options)
 
     @html_file = html
